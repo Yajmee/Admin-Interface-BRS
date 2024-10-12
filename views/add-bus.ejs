@@ -1,0 +1,128 @@
+<%- include('header'); %>
+
+
+<div class="container">
+    <div class="page-inner">
+      <div class="page-header">
+        <h3 class="fw-bold mb-3">Add Bus</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="#">
+              <i class="icon-home"></i>
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Forms</a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Bus</a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Form Elements</div>
+            </div>
+            <div class="card-body">
+                <form action="/dashboard/bus/add" method="POST"> <!-- Replace with your action URL -->
+                    
+                    <div class="form-group form-group-default">
+                        <label>Select Bus Line</label>
+                        <select
+                          class="form-select"
+                          id="formGroupDefaultSelect"
+                          name="bus_line"
+                        >
+                          <% for(var i = 0;i < data.busLines.length;i++){ const busLine = data.busLines[i];%>
+                            <option value ="<%= busLine %>"><%= busLine %></option>
+                            <%} %>
+                        </select>
+                    </div>
+                    <div class="form-group form-group-default">
+                        <label>Select Available Driver</label>
+                        <select
+                          class="form-select"
+                          id="formGroupDefaultSelect"
+                          name="driver_id"
+                        >
+                          <%if(data.error){ %>
+                            <option value =""><%= data.error %></option>
+                          <%}else{for(var i = 0; i < data.drivers.length;i++){ const driver = data.drivers[i];%>
+                            <option value ="<%= driver.id %>"> <%= driver.first_name%> <%= driver.last_name %></option>
+                          <%}} %>
+                        </select>
+                      </div>
+                      <div class="form-group form-group-default"></div>
+                        <label>Select Bus Type</label>
+                        <select
+                          class="form-select"
+                          id="formGroupDefaultSelect"
+                          name="bus_type"
+                        >
+                          <option value="AC">AC</option>
+                          <option value="Sleeper">Sleeper</option>
+                          <option value="Non-AC">Non-AC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                            <label for="registration">Registration Number</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                placeholder="Registration No."
+                                aria-label="registration"
+                                aria-describedby="basic-addon1"
+                                name="registration" 
+                                required 
+                            />
+                    </div>
+                    <div class="form-group">
+                        <label for="bus_number">Bus Number</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            placeholder="Bus No."
+                            aria-label="bus_number"
+                            aria-describedby="basic-addon1"
+                            name="bus_number" 
+                            required 
+                        />
+                </div>
+                <div class="form-group">
+                    <label for="total_seat">Total Seats</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Total Seats"
+                        aria-label="total_seat"
+                        aria-describedby="basic-addon1"
+                        name="total_seat" 
+                        required 
+                    />
+            </div>
+                    
+                    <div class="card-action">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>   
+    
+    
+<%- include('footer') %>
+
+
+
