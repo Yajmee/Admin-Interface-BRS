@@ -6,19 +6,18 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import session from 'express-session';
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
 app.use(cors());
-app.use(session({
-    secret: process.env.SESSION_SECRET,  // Use a strong secret stored in an environment variable
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
-  }));
-  
+app.use(express.json());
+app.use(cookieParser());
+const JWT_SECRET = process.env.SESSION_SECRET;
+const JWT_EXPIRES_IN = '1d';  // Expires in 1 day
 app.set("view engine","ejs");
 app.set(express.static(path.join(__dirname,'views')));
 app.use(express.static(path.join(__dirname,'public')));
@@ -36,7 +35,8 @@ const renderPage = (req,res,next)=>{
     })
 }
 app.get('/', (req, res, next) => {
-    if (!req.session.user) {
+    const token = req.cookies['token'];
+    if (!token) {
         const error = new Error('Login first!');
         error.status = 401;
         return next(error);
@@ -47,29 +47,30 @@ app.get('/', (req, res, next) => {
 });
 
 app.use('/dashboard',(req,res,next)=>{
-    if(!req.session.user){
+    const token = req.cookies['token'];
+    if(!token){
         const error = new Error('Login first!');
         error.status = 401;
         return next(error);
     }
      // If user is logged in, set username in res.locals
-     res.locals.data = {};
-    res.locals.data.username = req.session.username;
+    res.locals.data = {};
+    res.locals.data.username = req.cookies['username'];
     next();
     
 },admin,renderPage);
 
 app.get('/logout',(req,res,next)=>{
-    req.session.destroy((err) => {
-        if (err) {
-          return res.send('Error destroying session');
-        }
-        res.redirect('/login');
-      });
+    const cookies = req.cookies;
+    // Loop through the cookies and clear each one
+    for (const cookie in cookies) {
+        res.clearCookie(cookie);
+    }
+      res.redirect('/login');
 })
 app.get('/login',(req,res,next)=>{
-    
-    if (req.session.user) {
+    const token = req.cookies['token'];
+    if (token) {
         return res.redirect('/dashboard'); // Redirect authenticated users to dashboard or other page
     }
     res.render('index');
@@ -86,8 +87,22 @@ app.post('/login',async (req,res,next)=>{
         // Corrected URL and using response.data to access response body
         const response = await axios.post('https://bus-reservation-system-api.vercel.app/users/admin', postBody);
         
-        req.session.user = response.data.id;
-        req.session.username = username;
+        
+        res.cookie('userId', response.data.id, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration
+            sameSite: 'Strict'
+        });
+        res.cookie('username', username, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration
+            sameSite: 'Strict'
+        });
+        const jwtToken = jwt.sign({ userId: '12345' }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+        res.cookie('token', jwtToken, { httpOnly: true, secure: true });
         res.redirect('/dashboard');
     
       } catch (error) {
@@ -98,10 +113,10 @@ app.post('/login',async (req,res,next)=>{
       }
 });
 app.get('/profile/changepassword',(req,res,next)=>{
-    
-    if (req.session.user) {
+    const token = req.cookies['token'];
+    if (token) {
         res.locals.data = {};
-    res.locals.data.username = req.session.username;
+    res.locals.data.username = req.cookies['username'];
     const middlewareData = res.locals.data;
         return res.render('changepassword',{
             data: middlewareData
@@ -116,7 +131,7 @@ app.post('/profile/changepassword', async (req,res,next)=>{
     try{
         const {old_password, new_password,confirm_password} = req.body;
         const postBody = {
-            username : req.session.username,
+            username : req.cookies['username'],
             password:old_password,
             newPassword : new_password,
             confirmPassword : confirm_password

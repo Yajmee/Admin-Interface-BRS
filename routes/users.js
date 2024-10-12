@@ -8,7 +8,7 @@ router.get('/passenger', async (req, res, next) => {
     res.locals.page = 'passenger';
     // Render the page for passengers
 
-    const response = await axios.get(`${baseURL}/users/select?id=${req.session.user}&role=passenger`);
+    const response = await axios.get(`${baseURL}/users/select?id=${req.cookies['userId']}&role=passenger`);
 
     res.locals.data.passenger = response.data;
     console.log(response.data);
@@ -20,7 +20,7 @@ router.get('/driver', async (req, res, next) => {
     res.locals.page = 'driver';
     // Render the page for drivers
 
-    const response = await axios.get(`${baseURL}/users/select?id=${req.session.user}&role=driver`);
+    const response = await axios.get(`${baseURL}/users/select?id=${req.cookies['userId']}&role=driver`);
 
     res.locals.data.driver = response.data;
     next();
