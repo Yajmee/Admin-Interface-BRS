@@ -1,72 +1,77 @@
 <%- include('./header'); %>
-<div class="container">
-  <div class="page-inner">
-    <div class="page-header">
-      <h3 class="fw-bold mb-3">Passengers</h3>
-      <ul class="breadcrumbs mb-3">
-        <li class="nav-home">
-          <a href="/dashboard">
-            <i class="icon-home"></i>
-          </a>
-        </li>
-        <li class="separator">
-          <i class="icon-arrow-right"></i>
-        </li>
-        <li class="nav-item">
-          <a href="#">Passengers</a>
-        </li>
-        <li class="separator">
-          <i class="icon-arrow-right"></i>
-        </li>
-        <li class="nav-item">
-          <a href="#">Datatables</a>
-        </li>
-      </ul>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">List of Passenger</h4>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table
-                id="basic-datatables"
-                class="display table table-striped table-hover"
-              >
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                  </tr>
-                </thead>
-                <tfoot>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                  </tr>
-                </tfoot>
-                <tbody>
-                  <% if(data.passenger.length > 0){ for(var i = 0; i< data.passenger.length; i++) { %>
-
+  <div class="container">
+    <div class="page-inner">
+      <div class="page-header">
+        <h3 class="fw-bold mb-3">Passengers</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="/dashboard">
+              <i class="icon-home"></i>
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Passengers</a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Datatables</a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">List of Passenger</h4>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table id="basic-datatables" class="display table table-striped table-hover">
+                  <thead>
                     <tr>
-
-                      <td><%= data.passenger[i].id%></td>
-                      <td><%= data.passenger[i].first_name%></td>
-                      <td><%= data.passenger[i].last_name%></td>
+                      <th>#</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
                     </tr>
-                    <%}} else{ %>
-                    <p>No Data</p>
-                    <% } %>
-                </tbody>
-              </table>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>#</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    <% if(data.passenger.length> 0){ for(var i = 0; i< data.passenger.length; i++) { %>
+
+                        <tr>
+
+                          <td>
+                            <%= data.passenger[i].id%>
+                          </td>
+                          <td>
+                            <%= data.passenger[i].first_name%>
+                          </td>
+                          <td>
+                            <%= data.passenger[i].last_name%>
+                          </td>
+                        </tr>
+                        <%}} else{ %>
+                          <p>No Data</p>
+                          <% } %>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
   </div>
-</div>
-            
-<%- include('./footer'); %>
+
+    <%- include('./footer'); %>
