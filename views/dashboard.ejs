@@ -39,13 +39,13 @@
                         <div
                           class="icon-big text-center icon-info bubble-shadow-small"
                         >
-                          <i class="fas fa-user-check"></i>
+                        <i class="fas fa-ticket-alt"></i>
                         </div>
                       </div>
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                          <p class="card-category">Driver Count</p>
-                          <h4 class="card-title"><%= data.count.driver_count %></h4>
+                          <p class="card-category">Ticket Count</p>
+                          <h4 class="card-title"><%= data.count.ticketCount %></h4>
                         </div>
                       </div>
                     </div>
@@ -67,19 +67,25 @@
                       >
                         <thead>
                           <tr>
+                            <th>Ticket Number</th>
+                            <th>Booking Date</th>
                             <th>Trip Date</th>
-                            <th>Bus Line</th>
-                            <th>Driver Name</th>
-                            <th>Passenger Count</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Passenger Name</th>
+                            <th>Seat Occupied</th>
                             
                           </tr>
                         </thead>
                         <tfoot>
                           <tr>
+                            <th>Ticket Number</th>
+                            <th>Booking Date</th>
                             <th>Trip Date</th>
-                            <th>Bus Line</th>
-                            <th>Driver Name</th>
-                            <th>Passenger Count</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Passenger Name</th>
+                            <th>Seat Occupied</th>
                           </tr>
                         </tfoot>
                         <tbody>
@@ -87,10 +93,13 @@
                             const trip = data.trips[i];
                             %>
                             <tr>
-                              <td><%= trip.trip_date%></td>
-                              <td><%= trip.bus_line%></td>
-                              <td><%= trip.driver_name%></td>
-                              <td><%= trip.passenger_count%></td>
+                              <td><%= trip.ticketNumber%></td>
+                              <td><%= trip.bookingDate%></td>
+                              <td><%= trip.tripDate%></td>
+                              <td><%= trip.origin%></td>
+                              <td><%= trip.destination%></td>
+                              <td><%= trip.passengerName%></td>
+                              <td><%= trip.seatOccupied%></td>
                             </tr>
                           <%}} else{ %>
                           <p>No Data</p>

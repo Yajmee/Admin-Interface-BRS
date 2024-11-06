@@ -8,6 +8,15 @@ const router = express.Router();
 const baseURL = 'https://bus-reservation-system-api.vercel.app';
 router.use('/users',user);
 router.use('/bus',bus);
+const formatDate = (seconds,nanoseconds)=>{
+// Convert timestamp to Date object
+const millisecondsFromSeconds = seconds * 1000;
+const millisecondsFromNanoseconds = nanoseconds / 1000000;
+const totalMilliseconds = millisecondsFromSeconds + millisecondsFromNanoseconds;
+const date = new Date(totalMilliseconds);
+
+return date;
+}
 router.get('/', async (req, res, next) => {
     try{
         res.locals.page = 'dashboard';
@@ -17,30 +26,40 @@ router.get('/', async (req, res, next) => {
         res.locals.data.count = numberUser.data;
     
     
-        const response = await axios.get(`${baseURL}/routes/list`);
-    
+        const response = await axios.get(`${baseURL}/ticket/all`);
         const trips = response.data;
     
         res.locals.data.trips = [];
-        console.log(trips);
         let data = [];
+        let ticketCount = 0;
+        
         for(const trip of trips){
-            // Convert timestamp to Date object
-            const millisecondsFromSeconds = trip.trip_date.seconds * 1000;
-            const millisecondsFromNanoseconds = trip.trip_date.nanoseconds / 1000000;
-            const totalMilliseconds = millisecondsFromSeconds + millisecondsFromNanoseconds;
-            const date = new Date(totalMilliseconds);
-    
+            ticketCount++;
+            console.log(trip);
+            
+            const bookingDate = formatDate(trip.booking_date.seconds, trip.booking_date.nanoseconds);
+            const tripDate = formatDate(trip.route.trip_date.seconds,trip.route.trip_date.nanoseconds);
+
             // Format using dayjs
-            const formattedDate = dayjs(date).format('ddd, D MMM YYYY h:mma');
+            const formattedTrip= dayjs(tripDate).format('ddd, D MMM YYYY h:mma');
+            const formattedBooking = dayjs(bookingDate).format('ddd, D MMM YYYY h:mma');
+            const passengerName = `${trip.passenger.first_name} ${trip.passenger.last_name}`;
+            const tripOrigin = trip.route.origin;
+            const tripDestination = trip.route.destination;
+            const seatOccupied = trip.number_of_seats_occupied;
+            const ticketNumber = trip.ticket_number;
             const obj = {
-                trip_date : formattedDate,
-                bus_line : trip.bus_line,
-                driver_name : trip.driver_name,
-                passenger_count : trip.passenger_count
+                ticketNumber : ticketNumber,
+                tripDate : formattedTrip,
+                bookingDate : formattedBooking,
+                passengerName : passengerName,
+                origin : tripOrigin,
+                destination : tripDestination,
+                seatOccupied : seatOccupied
             }
             data.push(obj);
         }
+        res.locals.data.count.ticketCount = ticketCount; 
         res.locals.data.trips = data;
         next();
     }catch(error){
@@ -60,7 +79,7 @@ router.get('/', async (req, res, next) => {
             });
         } else {
             // Something happened in setting up the request
-            console.error('Error: Problem with request setup', error.message);
+            console.error('Error: Problem with request setup', error.message,error.stack);
             return res.status(500).send({
                 error: 'Internal server error. Please try again later.'
             });
